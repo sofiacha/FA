@@ -66,6 +66,7 @@ M = [5,1,18,-1,1;
    % 8,1,5,-1,1];
 
 Q = zeros(100,3);
+policy=zeros(22,1);
 lamda = ones(65,4);
 temp=zeros(9,5);
 c=1;
@@ -76,9 +77,8 @@ r=0;
 cccc=0;
 fl=0;
 flfl=0;
-
 fla=0;
-for u = 1:1000
+for u = 1:10000
 sstart=5;
 while sstart~=8
     for i=1:65
@@ -225,4 +225,20 @@ while sstart~=8
      end
 end
 end
+
+for i=1:22
+    c=0;
+    for k=1:65
+        if Q(k,1)==i &&c ==0
+            policy(i,1)=Q(k,2);
+            max=Q(k,3);
+        elseif Q(k,1)==i && c >0
+                if  max<Q(k,3)
+                    policy(i,1)=Q(k,2);
+                    max=Q(k,3);
+                end
+        end    
+    end
+end
+
 
