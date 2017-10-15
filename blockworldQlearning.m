@@ -63,31 +63,166 @@ M = [5,1,18,-1,1;
     17,5,13,-1,1;
     17,8,6,-1,1;
     6,2,17,-1,1];
+   % 8,1,5,-1,1];
 
-Q = zeros(65,3);
-lamda = ones(65,3);
-for i=1:65
-    Q(i,1) = M(i,1);
-    Q(i,2) = M(i,2);
-    lamda(i,1) = M(i,1);
-    lamda(i,2) = M(i,2);
-end
-max=0;
-for i=1:65
-    for j=1:65
-       if Q(i,1)==M(i,3) && Q(i,2)==M(i,2)
-           if max>Q(i,3)
-               max = Q(i,3)
+Q = zeros(100,3);
+lamda = ones(65,4);
+temp=zeros(9,5);
+c=1;
+cc=0;
+ccc=0;
+rr=1;
+r=0;
+cccc=0;
+fl=0;
+flfl=0;
+
+fla=0;
+for u = 1:1000
+sstart=5;
+while sstart~=8
+    for i=1:65
+        if M(i,1) == sstart
+            temp(c,1)=M(i,1);
+            temp(c,2)=M(i,2);
+            temp(c,3)=M(i,3);
+            temp(c,4)=M(i,4);
+            temp(c,5)=M(i,5);
+            c=c+1;
+        end
+    end
+    c=c-1; %length of temp
+    r = randi([1  c],1,1); %I can use temp(r,1/2/3/4/5) for the action specified exoume diale3ei randomly to action
+    for k=1:size(temp,1)  %edw mhdenizw osa den einai idio state kai idio action
+        if temp(k,1) == temp(r,1) && temp(k,2) == temp(r,2)
+            cc=cc+1;%metra posa states,actions exoume
+        else 
+            temp(k,1)=0;
+            temp(k,2)=0;
+            temp(k,3)=0;
+            temp(k,4)=0;
+            temp(k,5)=0;
+        end
+    end
+     x = (1-0).*rand();
+     if cc==3
+         if x(1,1)>0.9
+            for k=1:size(temp,1) %psa3e ston pinaka to 1o temp me to 0.1
+                if temp(k,5)==0.1 && ccc<1
+                    rr = k;
+                    ccc=ccc+1;
+                end
+            end
+         elseif 0.8<x(1,1)<=0.9
+              for k=1:size(temp,1) %psa3e ston pinaka to temp me to 0.1
+                if temp(k,5)==0.1 
+                    if ccc==1
+                        rr = k;
+                    else
+                        ccc=ccc+1;
+                    end
+                end
+              end
+         else
+              for k=1:size(temp,1) %psa3e ston pinaka to temp me to 0.1
+                if temp(k,5)==0.8
+                    rr = k;
+                end
+              end
+         end
+     elseif cc==2
+         if x(1,1)>0.9
+            for k=1:size(temp,1) %psa3e ston pinaka to temp me to 0.1
+                if temp(k,5)==0.1
+                    rr = k;
+                end
+            end
+         else
+              for k=1:size(temp,1) %psa3e ston pinaka to temp me to 0.1
+                if temp(k,5)==0.9
+                    rr = k;
+                end
+              end
+         end
+     else
+        for k=1:size(temp,1) %metraw posa state actions exoume 
+            if temp(k,1)~=0
+                rr = k;
+            end
+        end
+     end
+     
+     %%calculate max
+     for j=1:100
+        if Q(j,1) == temp(rr,3)
+            fl=1;
+            cccc=cccc+1;
+            if cccc==1
+                max = Q(j,3);
+            else
+                if max<Q(j,3)% to max dn 8a einai >0 sta prwta iteration giauto e8esa to arxiko max san -2 opote logika lunw to problhma
+                    max = Q(j,3);
+                end
+            end
+        end
+     end
+    d=zeros(5,1);
+    dd=0;
+     if fl == 0
+           for j=1:65
+               if M(j,1) == temp(rr,3)
+                   if isempty(find(d==M(j,2),1))
+                      for i=1:100
+                          if Q(i,1)==0 && Q(i,2)==0
+                             Q(i,1)=  M(j,1);
+                             Q(i,2)=  M(j,2);
+                             dd=dd+1;
+                             d(dd,1)= M(j,2);
+                             break;
+                          end
+                      end
+                   end
+               end
+           end  
+           max=0;
+     end
+     %%end of max calculation
+     %find state and action in Q matrix
+     for l=1:65
+        if Q(l,1) == temp(rr,1) && Q(l,2)==temp(rr,2)
+            fla=1;
+            m=l;
+        end
+     end  
+     if fla == 0
+         m=0; 
+         for j=1:100
+           if Q(j,1) == 0 && Q(j,2)== 0
+              m=j;
+              break;
            end
-       end
-        % Q(M(i,3),M(i,2))
-    end  
-    Q(i,3)=Q(i,3)+lamda(i,3)*(M(i,5)+0.9*max-Q(i,3));
-    lamda(i,3) = lamda(i,3)+1;
-    
+         end
+         Q(m,1)= temp(rr,1);
+         Q(m,2)= temp(rr,2);
+     end   
+     lamda(m,1)= temp(rr,1); %den to metraei swsta
+     lamda(m,2)= temp(rr,2);
+     Q(m,3)=Q(m,3)+lamda(m,4)*(temp(rr,4)+0.9*max-Q(m,3));% eleg3e pws skata to upologizw
+     lamda(m,3) = lamda(m,3)+1;
+     lamda(m,4) = 1/lamda(m,3);
+     sstart=temp(rr,3);
+     c=1;
+     cc=0;
+     cccc=0;
+     ccc=0;
+     fla=0;
+     fl=0;
+     flfl=0;
+     for k=1:size(temp,1) 
+        for n=1:5
+             temp(k,n)=0;
+        end
+     end
 end
-
-B = sortrows(Q);
-
-
+end
 
